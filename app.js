@@ -259,5 +259,17 @@ function applyFilters() {
     return matchesSearch && matchesKana;
   });
 
+  // 五十音で絞り込んでいる時だけ、カナの五十音順に並べ替える
+if (selectedKana !== 'all') {
+  const collator = new Intl.Collator('ja', {
+    usage: 'sort',
+    sensitivity: 'base'
+  });
+
+  filteredRecipes.sort((a, b) => {
+    return collator.compare(a.kana, b.kana);
+  });
+}
+
   renderRecipes(filteredRecipes);
 }
