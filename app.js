@@ -140,6 +140,20 @@ async function loadRecipes() {
     );
 
     renderRecipes(recipes);
+    
+    // PCでは最初のレシピを自動表示
+if (window.innerWidth > 700 && recipes.length > 0) {
+  const firstItem = document.querySelector('#recipe-list article');
+
+  if (firstItem) {
+    firstItem.classList.add('selected');
+  }
+
+  showRecipeDetail(recipes[0]);
+
+  // PCでは詳細表示用のbodyクラスは不要
+  document.body.classList.remove('show-detail');
+}
 
   } catch (error) {
     console.error(error);
