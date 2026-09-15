@@ -120,8 +120,39 @@ if (detailImage) {
 }
 
 async function loadRecipes() {
-  statusElement.textContent = 'レシピを読み込み中...';
+  // 1. まず端末に保存されているデータを即表示
+  const cachedRecipes = localStorage.getItem('cocktailRecipes');
 
+  if (cachedRecipes) {
+    try {
+      recipes = JSON.parse(cachedRecipes);
+
+      renderRecipes(recipes);
+
+      statusElement.textContent =
+        `${recipes.length}件　最新データを確認中...`;
+
+      // PCでは最初のレシピを自動表示
+      if (window.innerWidth > 700 && recipes.length > 0) {
+        const firstItem = document.querySelector('#recipe-list article');
+
+        if (firstItem) {
+          firstItem.classList.add('selected');
+        }
+
+        showRecipeDetail(recipes[0]);
+        document.body.classList.remove('show-detail');
+      }
+
+    } catch (error) {
+      console.error('保存データの読み込みに失敗:', error);
+    }
+  } else {
+    // 初回起動で保存データがない場合
+    statusElement.textContent = 'レシピを読み込み中...';
+  }
+
+  // 2. 裏でGoogleから最新データを取得
   try {
     const response = await fetch(API_URL);
 
@@ -133,40 +164,24 @@ async function loadRecipes() {
 
     recipes = data.recipes;
 
-    // 取得したレシピを端末に保存
+    // 最新データを端末に保存
     localStorage.setItem(
       'cocktailRecipes',
       JSON.stringify(recipes)
     );
 
-    renderRecipes(recipes);
-    
-    // PCでは最初のレシピを自動表示
-if (window.innerWidth > 700 && recipes.length > 0) {
-  const firstItem = document.querySelector('#recipe-list article');
+    // 最新データで画面を更新
+    applyFilters();
 
-  if (firstItem) {
-    firstItem.classList.add('selected');
-  }
-
-  showRecipeDetail(recipes[0]);
-
-  // PCでは詳細表示用のbodyクラスは不要
-  document.body.classList.remove('show-detail');
-}
+    statusElement.textContent = `${recipes.length}件`;
 
   } catch (error) {
-    console.error(error);
+    console.error('最新データの取得に失敗:', error);
 
-    // 通信できなければ保存済みデータを使用
-    const cachedRecipes = localStorage.getItem('cocktailRecipes');
-
+    // 保存データがあるなら、そのまま使用
     if (cachedRecipes) {
-      recipes = JSON.parse(cachedRecipes);
-      renderRecipes(recipes);
-
       statusElement.textContent =
-        `${recipes.length}件のレシピを表示中（保存データ）`;
+        `${recipes.length}件（保存データ）`;
     } else {
       statusElement.textContent =
         'レシピの読み込みに失敗しました';
