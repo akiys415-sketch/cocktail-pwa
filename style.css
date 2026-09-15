@@ -14,12 +14,18 @@ body {
 
 body {
   padding: 18px;
+  font-size: 18px;
 }
 
-/* アプリ全体 */
+
+/* ==============================
+   アプリ全体
+============================== */
+
 .app-container {
   width: 100%;
   height: calc(100vh - 36px);
+
   display: flex;
   overflow: hidden;
 
@@ -27,14 +33,15 @@ body {
   border-radius: 12px;
 }
 
-/* ----------------
-   左側
----------------- */
+
+/* ==============================
+   左側：レシピ一覧
+============================== */
 
 .sidebar {
   width: 40%;
-  max-width: 470px;
-  min-width: 330px;
+  max-width: 520px;
+  min-width: 350px;
 
   display: flex;
   flex-direction: column;
@@ -43,66 +50,91 @@ body {
   border-right: 1px solid #ddd;
 }
 
+
+/* タイトル */
+
 .sidebar-header {
-  padding: 14px 14px 8px;
+  padding: 16px 14px 10px;
 }
 
 .sidebar-header h1 {
   margin: 0;
-  font-size: 19px;
+  font-size: 24px;
+  line-height: 1.3;
 }
 
-/* 検索 */
+
+/* ==============================
+   検索
+============================== */
+
 .search-area {
   display: flex;
-  gap: 6px;
-  padding: 0 12px 12px;
+  gap: 8px;
+  padding: 0 12px 14px;
 }
 
 #search-input {
   flex: 1;
   min-width: 0;
-  padding: 10px 12px;
 
-  font-size: 14px;
+  padding: 11px 13px;
+
+  font-size: 18px;
+
   border: 1px solid #d1d5db;
   border-radius: 6px;
+
   background: white;
 }
 
 #search-button {
-  padding: 0 12px;
+  padding: 0 16px;
+  min-height: 44px;
 
   border: 0;
   border-radius: 6px;
 
   background: #3478e5;
   color: white;
-  font-size: 14px;
+
+  font-size: 17px;
+
   cursor: pointer;
 }
 
-/* 五十音＋一覧 */
+
+/* ==============================
+   五十音＋一覧
+============================== */
+
 .list-area {
   display: flex;
   flex: 1;
   min-height: 0;
+
   padding: 0 12px 12px;
 }
 
+
+/* 五十音 */
+
 .kana-filter {
-  width: 72px;
+  width: 76px;
   flex-shrink: 0;
 
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 
-  padding-right: 8px;
+  padding-right: 9px;
 }
 
 .kana-filter button {
-  height: 25px;
+  height: 38px;
+
+  font-size: 18px;
+  font-weight: 500;
 
   border: 0;
   border-radius: 6px;
@@ -118,15 +150,22 @@ body {
   color: white;
 }
 
+
+/* レシピ一覧 */
+
 .recipe-list-area {
   flex: 1;
   min-width: 0;
+
   overflow-y: auto;
 }
 
 #status {
-  margin: 0 0 8px;
-  font-size: 12px;
+  margin: 0 0 9px;
+
+  font-size: 15px;
+  line-height: 1.4;
+
   color: #777;
 }
 
@@ -134,12 +173,13 @@ body {
   display: block;
 }
 
-/* この段階では既存カードをコンパクトにする */
 #recipe-list article {
   margin: 0;
-  padding: 8px 9px;
+
+  padding: 10px 10px;
 
   background: transparent;
+
   border-radius: 5px;
   box-shadow: none;
 
@@ -152,9 +192,14 @@ body {
 
 #recipe-list h2 {
   margin: 0;
-  font-size: 14px;
+
+  font-size: 18px;
+  line-height: 1.55;
   font-weight: 500;
 }
+
+
+/* 一覧では詳細情報を非表示 */
 
 #recipe-list p,
 #recipe-list ul,
@@ -163,80 +208,8 @@ body {
   display: none;
 }
 
-/* ----------------
-   右側
----------------- */
 
-.detail-panel {
-  flex: 1;
-  min-width: 0;
-  overflow-y: auto;
-  background: white;
-}
-
-.recipe-detail {
-  padding: 22px 26px;
-}
-
-.detail-placeholder {
-  margin-top: 40px;
-  color: #888;
-  text-align: center;
-}
-
-.recipe-detail h1 {
-  margin: 0;
-  font-size: 36px;
-}
-
-.recipe-detail h2 {
-  margin: 0 0 18px;
-  font-size: 18px;
-}
-
-.detail-meta {
-  display: flex;
-  gap: 80px;
-  padding: 12px 0;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-}
-
-.detail-content {
-  display: flex;
-  gap: 30px;
-  margin-top: 18px;
-}
-
-.detail-text {
-  flex: 1;
-}
-
-.detail-text h3 {
-  margin: 18px 0 10px;
-  font-size: 18px;
-}
-
-.detail-ingredients {
-  padding-left: 20px;
-  line-height: 1.8;
-}
-
-.detail-ingredients strong {
-  color: #1261d5;
-}
-
-.detail-image-area {
-  width: 230px;
-  flex-shrink: 0;
-}
-
-.detail-image {
-  width: 100%;
-  height: auto;
-  border-radius: 7px;
-  display: block;
-}
+/* 選択中 */
 
 #recipe-list article.selected {
   background: #3478e5;
@@ -247,86 +220,145 @@ body {
   background: #3478e5;
 }
 
-.back-button {
-  display: none;
+
+/* ==============================
+   右側：詳細
+============================== */
+
+.detail-panel {
+  flex: 1;
+  min-width: 0;
+
+  overflow-y: auto;
+
+  background: white;
 }
 
-/* iPhoneなど画面が狭い場合 */
-@media (max-width: 700px) {
+.recipe-detail {
+  padding: 24px 28px;
+}
 
-  body {
-    padding: 0;
-  }
+.detail-placeholder {
+  margin-top: 40px;
 
-  .app-container {
-    height: 100vh;
-    border-radius: 0;
-  }
+  font-size: 18px;
 
-  .sidebar {
-    width: 100%;
-    max-width: none;
-    min-width: 0;
-    border-right: 0;
-  }
+  color: #888;
+  text-align: center;
+}
 
-  .detail-panel {
-    display: none;
-    width: 100%;
-  }
 
-  body.show-detail .sidebar {
-    display: none;
-  }
+/* カクテル名 */
 
-  body.show-detail .detail-panel {
-    display: block;
-  }
+.recipe-detail h1 {
+  margin: 0;
 
-  .back-button {
-    display: inline-block;
-    margin-bottom: 18px;
-    padding: 9px 12px;
+  font-size: 42px;
+  line-height: 1.2;
+}
 
-    border: 0;
-    border-radius: 6px;
 
-    background: #e5e7eb;
-    color: #182033;
-    font-size: 14px;
-    cursor: pointer;
-  }
+/* カナ */
 
-  .recipe-detail {
-    padding: 18px;
-  }
+.recipe-detail h2 {
+  margin: 4px 0 20px;
 
-  .recipe-detail h1 {
-    font-size: 30px;
-  }
+  font-size: 22px;
+  line-height: 1.4;
 
-  .detail-meta {
-    gap: 25px;
-  }
+  font-weight: 500;
+}
 
-  .detail-content {
-    display: block;
-  }
 
-  .detail-image-area {
-    width: 100%;
-    margin-top: 20px;
-  }
+/* 技法・グラス */
 
-  .detail-image {
-    max-width: 400px;
-    margin: 0 auto;
-  }
+.detail-meta {
+  display: flex;
+  gap: 80px;
+
+  padding: 14px 0;
+
+  font-size: 19px;
+  line-height: 1.5;
+
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+
+/* 詳細本文 */
+
+.detail-content {
+  display: flex;
+  gap: 32px;
+
+  margin-top: 20px;
+}
+
+.detail-text {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.detail-text h3 {
+  margin: 20px 0 12px;
+
+  font-size: 22px;
+  line-height: 1.4;
+}
+
+
+/* 材料 */
+
+.detail-ingredients {
+  padding-left: 24px;
+
+  font-size: 19px;
+  line-height: 2;
+}
+
+.detail-ingredients li {
+  margin-bottom: 2px;
+}
+
+.detail-ingredients strong {
+  color: #1261d5;
+}
+
+
+/* 備考 */
+
+.detail-text p {
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+
+/* ==============================
+   カクテル画像
+============================== */
+
+.detail-image-area {
+  width: 250px;
+  flex-shrink: 0;
 }
 
 .detail-image {
+  width: 100%;
+  height: auto;
+
+  display: block;
+
+  border-radius: 7px;
+
   cursor: zoom-in;
 }
+
+
+/* ==============================
+   画像拡大表示
+============================== */
 
 .image-overlay {
   position: fixed;
@@ -340,6 +372,7 @@ body {
   padding: 20px;
 
   background: rgba(0, 0, 0, 0.88);
+
   cursor: zoom-out;
 }
 
@@ -348,5 +381,185 @@ body {
   max-height: 90vh;
 
   object-fit: contain;
+
   border-radius: 8px;
+}
+
+
+/* ==============================
+   戻るボタン
+============================== */
+
+.back-button {
+  display: none;
+}
+
+
+/* ==============================
+   iPhoneなど画面が狭い場合
+============================== */
+
+@media (max-width: 700px) {
+
+  body {
+    padding: 0;
+
+    font-size: 18px;
+  }
+
+  .app-container {
+    height: 100vh;
+
+    border-radius: 0;
+  }
+
+
+  /* 一覧 */
+
+  .sidebar {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+
+    border-right: 0;
+  }
+
+  .sidebar-header {
+    padding-top: 14px;
+  }
+
+  .sidebar-header h1 {
+    font-size: 23px;
+  }
+
+
+  /* 検索 */
+
+  #search-input {
+    font-size: 18px;
+  }
+
+  #search-button {
+    font-size: 17px;
+  }
+
+
+  /* 五十音 */
+
+  .kana-filter {
+    width: 72px;
+  }
+
+  .kana-filter button {
+    height: 38px;
+
+    font-size: 18px;
+  }
+
+
+  /* 一覧の文字 */
+
+  #recipe-list article {
+    padding: 11px 9px;
+  }
+
+  #recipe-list h2 {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+
+
+  /* 詳細画面 */
+
+  .detail-panel {
+    display: none;
+
+    width: 100%;
+  }
+
+  body.show-detail .sidebar {
+    display: none;
+  }
+
+  body.show-detail .detail-panel {
+    display: block;
+  }
+
+
+  /* 戻るボタン */
+
+  .back-button {
+    display: inline-block;
+
+    margin-bottom: 18px;
+
+    padding: 11px 14px;
+
+    border: 0;
+    border-radius: 6px;
+
+    background: #e5e7eb;
+    color: #182033;
+
+    font-size: 17px;
+
+    cursor: pointer;
+  }
+
+
+  /* 詳細 */
+
+  .recipe-detail {
+    padding: 20px;
+  }
+
+  .recipe-detail h1 {
+    font-size: 34px;
+    line-height: 1.2;
+  }
+
+  .recipe-detail h2 {
+    font-size: 21px;
+  }
+
+  .detail-meta {
+    gap: 26px;
+
+    font-size: 18px;
+
+    flex-wrap: wrap;
+  }
+
+  .detail-content {
+    display: block;
+  }
+
+  .detail-text h3 {
+    font-size: 22px;
+  }
+
+  .detail-ingredients {
+    font-size: 19px;
+    line-height: 2;
+  }
+
+  .detail-text p {
+    font-size: 18px;
+    line-height: 1.8;
+  }
+
+
+  /* 画像 */
+
+  .detail-image-area {
+    width: 100%;
+
+    margin-top: 22px;
+  }
+
+  .detail-image {
+    max-width: 400px;
+
+    margin: 0 auto;
+  }
 }
