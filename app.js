@@ -62,11 +62,30 @@ async function loadRecipes() {
 
     recipes = data.recipes;
 
+    // 取得したレシピを端末に保存
+    localStorage.setItem(
+      'cocktailRecipes',
+      JSON.stringify(recipes)
+    );
+
     renderRecipes(recipes);
 
   } catch (error) {
     console.error(error);
-    statusElement.textContent = 'レシピの読み込みに失敗しました';
+
+    // 通信できなければ保存済みデータを使用
+    const cachedRecipes = localStorage.getItem('cocktailRecipes');
+
+    if (cachedRecipes) {
+      recipes = JSON.parse(cachedRecipes);
+      renderRecipes(recipes);
+
+      statusElement.textContent =
+        `${recipes.length}件のレシピを表示中（保存データ）`;
+    } else {
+      statusElement.textContent =
+        'レシピの読み込みに失敗しました';
+    }
   }
 }
 
