@@ -6,46 +6,117 @@ const searchInput = document.getElementById('search-input');
 const API_URL = 'https://script.google.com/macros/s/AKfycbxHD8qW8Docm6L0kNcatDp73bNR7TiKisFjybBHdqkgFVSfYVQ4ANjQ3xC0KGGMaORW9w/exec';
 
 let recipes = [];
+let selectedKana = 'all';
 
 function renderRecipes(recipeData) {
   recipeListElement.innerHTML = '';
 
   recipeData.forEach(recipe => {
-    const card = document.createElement('article');
+    const item = document.createElement('article');
 
-    const imageUrl = recipe.imageUrl
-  ? recipe.imageUrl.replace(/^\[.*?\]\((https?:\/\/.*?)\)$/, '$1')
-  : '';
+    item.innerHTML = `
+      <h2>${recipe.name} / ${recipe.kana}</h2>
+    `;
 
-card.innerHTML = `
-  ${imageUrl ? `
-    <img
-      src="${imageUrl}"
-      alt="${recipe.name}"
-      class="recipe-image"
-      loading="lazy"
-    >
-  ` : ''}
+    item.addEventListener('click', () => {
+      // いったん全部の選択状態を解除
+      document
+        .querySelectorAll('#recipe-list article')
+        .forEach(el => el.classList.remove('selected'));
 
-  <h2>${recipe.name}</h2>
-  <p>${recipe.kana}</p>
-  <p>${recipe.technique} / ${recipe.glass}</p>
+      // クリックしたものを選択状態にする
+      item.classList.add('selected');
 
-  <ul>
-    ${recipe.ingredients.map(item => `
-      <li>${item.name}：${item.amount}</li>
-    `).join('')}
-  </ul>
-  
-  ${recipe.note ? `
-  <p class="recipe-note">${recipe.note}</p>
-` : ''}
-`;
+      showRecipeDetail(recipe);
+    });
 
-    recipeListElement.appendChild(card);
+    recipeListElement.appendChild(item);
   });
 
-  statusElement.textContent = `${recipeData.length}件のレシピを表示中`;
+  statusElement.textContent = `${recipeData.length}件`;
+}
+
+function showRecipeDetail(recipe) {
+  const detailElement = document.getElementById('recipe-detail');
+
+  const imageUrl = recipe.imageUrl
+    ? recipe.imageUrl.replace(/^\[.*?\]\((https?:\/\/.*?)\)$/, '$1')
+    : '';
+
+  detailElement.innerHTML = `
+  <button id="back-to-list" class="back-button">
+    ← カクテル一覧
+  </button>
+
+  <h1>${recipe.name}</h1>
+  <h2>（${recipe.kana}）</h2>
+
+  <div class="detail-meta">
+    <span><strong>技法:</strong> ${recipe.technique}</span>
+    <span><strong>グラス:</strong> ${recipe.glass}</span>
+  </div>
+
+  <div class="detail-content">
+
+    <div class="detail-text">
+
+      <h3>材料と分量</h3>
+
+      <ul class="detail-ingredients">
+        ${recipe.ingredients.map(item => `
+          <li>
+            <strong>${item.name}:</strong> ${item.amount}
+          </li>
+        `).join('')}
+      </ul>
+
+      <h3>備考</h3>
+
+      <p>
+        ${recipe.note || '特になし'}
+      </p>
+
+    </div>
+
+    ${imageUrl ? `
+      <div class="detail-image-area">
+        <img
+  src="${imageUrl}"
+  alt="${recipe.name}"
+  class="detail-image"
+  id="detail-image"
+>
+      </div>
+    ` : ''}
+
+  </div>
+`;
+document.body.classList.add('show-detail');
+
+document
+  .getElementById('back-to-list')
+  .addEventListener('click', () => {
+    document.body.classList.remove('show-detail');
+  });
+
+  const detailImage = document.getElementById('detail-image');
+
+if (detailImage) {
+  detailImage.addEventListener('click', () => {
+    const overlay = document.createElement('div');
+    overlay.className = 'image-overlay';
+
+    overlay.innerHTML = `
+      <img src="${imageUrl}" alt="${recipe.name}">
+    `;
+
+    overlay.addEventListener('click', () => {
+      overlay.remove();
+    });
+
+    document.body.appendChild(overlay);
+  });
+}
 }
 
 async function loadRecipes() {
@@ -89,17 +160,23 @@ async function loadRecipes() {
   }
 }
 
-searchInput.addEventListener('input', () => {
-  const keyword = searchInput.value.trim().toLowerCase();
+searchInput.addEventListener('input', applyFilters);
 
-  const filteredRecipes = recipes.filter(recipe => {
-    return (
-      recipe.name.toLowerCase().includes(keyword) ||
-      recipe.kana.includes(keyword)
-    );
+document.getElementById('search-button').addEventListener('click', applyFilters);
+
+document.querySelectorAll('.kana-filter button').forEach(button => {
+  button.addEventListener('click', () => {
+
+    document
+      .querySelectorAll('.kana-filter button')
+      .forEach(btn => btn.classList.remove('active'));
+
+    button.classList.add('active');
+
+    selectedKana = button.dataset.kana;
+
+    applyFilters();
   });
-
-  renderRecipes(filteredRecipes);
 });
 
 loadRecipes();
@@ -115,4 +192,58 @@ if ('serviceWorker' in navigator) {
         console.error('Service Worker registration failed:', error);
       });
   });
+}
+
+function getKanaGroup(kana) {
+  if (!kana) return '';
+
+  const first = kana.trim().charAt(0);
+
+  const groups = {
+    'ア': 'アイウエオァィゥェォヴ',
+    'カ': 'カキクケコガギグゲゴ',
+    'サ': 'サシスセソザジズゼゾ',
+    'タ': 'タチツテトダヂヅデド',
+    'ナ': 'ナニヌネノ',
+    'ハ': 'ハヒフヘホバビブベボパピプペポ',
+    'マ': 'マミムメモ',
+    'ヤ': 'ヤユヨャュョ',
+    'ラ': 'ラリルレロ',
+    'ワ': 'ワヲン'
+  };
+
+  for (const [group, characters] of Object.entries(groups)) {
+    if (characters.includes(first)) {
+      return group;
+    }
+  }
+
+  return '';
+}
+
+function applyFilters() {
+  const keyword = searchInput.value.trim().toLowerCase();
+
+  const filteredRecipes = recipes.filter(recipe => {
+
+    // 名前・カナ・材料を検索対象にする
+    const ingredientText = recipe.ingredients
+      .map(item => item.name)
+      .join(' ')
+      .toLowerCase();
+
+    const matchesSearch =
+      recipe.name.toLowerCase().includes(keyword) ||
+      recipe.kana.includes(keyword) ||
+      ingredientText.includes(keyword);
+
+    // 五十音フィルター
+    const matchesKana =
+      selectedKana === 'all' ||
+      getKanaGroup(recipe.kana) === selectedKana;
+
+    return matchesSearch && matchesKana;
+  });
+
+  renderRecipes(filteredRecipes);
 }
