@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cocktail-pwa-v2';
+const CACHE_NAME = 'cocktail-pwa-v3';
 
 const APP_FILES = [
   './',
