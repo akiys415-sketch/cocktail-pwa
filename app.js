@@ -15,7 +15,7 @@ function renderRecipes(recipeData) {
     const item = document.createElement('article');
 
     item.innerHTML = `
-      <h2>${recipe.name} / ${recipe.kana}</h2>
+      <h2>${recipe.kana} / ${recipe.name}</h2>
     `;
 
     item.addEventListener('click', () => {
